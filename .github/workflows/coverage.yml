@@ -1,0 +1,70 @@
+# GitHub Actions workflow for installing Poetry and running Coverage
+# Based on: https://github.com/marketplace/actions/codecov
+
+name: Coverage
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push (all branches) or pull requests (only for main branch)
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout out repo and setup python
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Setup Python
+        id: setup-python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      # Install and configure poetry
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      # Load cached venv if cache exists
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      # Install dependencies if cache does not exist
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+      # Install project package
+      - name: Install library
+        run: poetry install --no-interaction
+      # Save api keys to .env file
+      - name: Create .env file and run coverage
+        run: |
+#          echo TRAIN_API_TOKEN=${{ secrets.TRAIN_API_TOKEN }} > .env
+#          echo WEATHER_API_TOKEN=${{ secrets.WEATHER_API_TOKEN }} >> .env
+          poetry run invoke test --junit --coverage="xml"
+      # Upload coverage report to Codecov
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: ./bin/coverage.xml
+          name: codecov-umbrella # optional
+          verbose: true # optional (default = false)
+      # Upload coverage report to Codeclimate
+      - name: Upload coverage report to Codeclimate
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
+        with:
+          coverageLocations: ./bin/coverage.xml:coverage.py

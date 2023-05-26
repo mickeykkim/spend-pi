@@ -1,0 +1,215 @@
+[tool]
+[tool.poetry]
+name = "spend_pi"
+version = "0.1.0"
+description = "Small web app to track spending"
+authors = ["Mickey Kim <mickeykkim@gmail.com>"]
+readme = "README.rst"
+license =  "MIT"
+classifiers=[
+    'Development Status :: 2 - Pre-Alpha',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+]
+packages = [
+    { include = "spend_pi" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "^2.3.2"
+flask-sqlalchemy = "^3.0.3"
+
+[tool.poetry.group.dev.dependencies]
+bandit = "^1.7.4"
+black = "^23.3.0"
+bump2version = "^1.0.1"
+coverage = "^7.2.0"
+invoke = "2.1.2"
+isort = "^5.12.0"
+mypy = "^1.0"
+pylint = "^2.16.3"
+pytest = "^7.1.2"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.3.1"
+ruff = "^0.0.270"
+safety = "^2.3.5"
+sphinx = "^7.0.1"
+tox = "^4.4.6"
+types-requests = "^2.28.8"
+
+[tool.poetry.scripts]
+spend_pi = "spend_pi.cli:main"
+
+[tool.pytest.ini_options]
+filterwarnings = "ignore::DeprecationWarning"
+markers = [
+  "integration", # end-to-end tests
+  "e2e",
+]
+minversion = "6.0"
+testpaths = ["tests"]
+norecursedirs = [
+    "docs",
+    "dist",
+    "build",
+    "venv",
+    "bin",
+    "lib",
+    "include",
+    "share",
+    "local",
+    "tmp",
+    "tmp.*",
+    ".*",
+    "*.egg-info",
+    "*.egg-info/*",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["spend_pi"]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@abstractmethod",
+    "@abc.abstractmethod",
+    # Don't complain about imports
+    "import *",
+    "from * import *",
+]
+ignore_errors = true
+skip_empty = true
+omit = [
+    "tests/*",
+    "venv/*",
+    "bin/*",
+    "lib/*",
+    "include/*",
+    "share/*",
+    "local/*",
+    "tmp/*",
+    "tmp.*/*",
+    ".*/*",
+    "*.egg-info/*",
+]
+precision = 2
+
+[tool.coverage.html]
+skip_empty = true
+directory = "bin/coverage_html"
+
+[tool.black]
+line-length = 88
+preview = true
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+select = ["E", "F", "G", "B", "Q", "W"]
+ignore = []
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G"]
+unfixable = []
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "__pycache__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "bin",
+]
+# Same as Black.
+line-length = 88
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+# Assume Python 3.10.
+target-version = "py310"
+[tool.ruff.mccabe]
+max-complexity = 7
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = true
+envlist = py3.8, py3.9, py3.10, py3.11, docs
+
+[testenv:py3.8]
+basepython=python3.8
+
+[testenv:py3.9]
+basepython=python3.9
+
+[testenv:py3.10]
+basepython=python3.10
+
+[testenv:py3.11]
+basepython=python3.11
+
+[testenv]
+description = Run compliance tests
+allowlist_externals = poetry, invoke
+require_locked_deps = true
+install_dev_deps = true
+commands =
+    invoke format --check
+    invoke lint
+    invoke security
+    invoke test --junit --coverage="xml"
+
+[testenv:docs]
+description = Build documentation
+allowlist_externals = poetry, invoke
+require_locked_deps = true
+install_dev_deps = true
+commands =
+    invoke docs --no-launch
+"""
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
