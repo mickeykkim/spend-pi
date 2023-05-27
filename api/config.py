@@ -1,4 +1,4 @@
-"""Configuration for spend_pi"""
+"""Configuration for api"""
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))

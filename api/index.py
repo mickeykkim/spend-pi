@@ -3,7 +3,7 @@ from typing import Type
 
 from flask import Flask
 
-from spend_pi.config import Config
+from api.config import Config
 
 
 def create_app(config_class: Type[Config] = Config) -> Flask:
@@ -22,8 +22,8 @@ def create_app(config_class: Type[Config] = Config) -> Flask:
     # Initialize Flask extensions here
 
     # Register blueprints here
-    from spend_pi.app.main.routes import main_bp
-    from spend_pi.app.posts.routes import posts_bp
+    from api.main.routes import main_bp
+    from api.posts.routes import posts_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(posts_bp, url_prefix="/posts")

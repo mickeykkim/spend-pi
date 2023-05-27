@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-"""Tests for `spend_pi` package."""
+"""Tests for `api` package."""
 # pylint: disable=redefined-outer-name
-from spend_pi import __version__
+from api import __version__
 
 
 def test_version() -> None:

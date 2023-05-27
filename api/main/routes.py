@@ -1,4 +1,4 @@
-"""Routes for spend_pi"""
+"""Routes for api"""
 from flask import Blueprint, render_template
 
 main_bp = Blueprint("main", __name__)

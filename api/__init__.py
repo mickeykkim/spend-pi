@@ -1,4 +1,4 @@
-"""Top-level package for spend_pi."""
+"""Top-level package for api."""
 
 __author__ = """Mickey Kim"""
 __email__ = "mickeykkim@gmail.com"

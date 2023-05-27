@@ -3,12 +3,12 @@ ARG PYTHON_BASE
 FROM python:${PYTHON_BASE} as base
 ARG PYPI_URL
 
-RUN mkdir /spend_pi
+RUN mkdir /api
 WORKDIR /spend_pi
 
 # copy build files
 COPY pyproject.toml poetry.lock README.rst /spend_pi/
-COPY spend_pi /spend_pi/spend_pi
+COPY api /spend_pi/spend_pi
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
