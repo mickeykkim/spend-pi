@@ -115,3 +115,4 @@ ENV/
 # Generated files
 bin/
 .build_*
+.vercel
